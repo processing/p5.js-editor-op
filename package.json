@@ -8,7 +8,7 @@
     "start:prod": "cross-env NODE_ENV=production node index.js",
     "lint": "eslint client server --ext .jsx --ext .js --ext .tsx --ext .ts",
     "lint-fix": "eslint client server --ext .jsx --ext .js --ext .tsx --ext .ts --fix",
-    "build": "cross-env NODE_ENV=production webpack --config webpack/config.prod.js && node scripts/generate-index.mjs",
+    "build": "cross-env NODE_ENV=production webpack --config webpack/config.prod.js && node --env-file=.env scripts/generate-index.mjs",
     "test": "NODE_ENV=test jest --passWithNoTests",
     "test:watch": "NODE_ENV=test jest --watch",
     "test:ci": "npm run lint && npm run test",

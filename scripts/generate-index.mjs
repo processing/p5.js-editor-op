@@ -17,16 +17,9 @@ if (!appJs || !appCss) {
   process.exit(1);
 }
 
-// Runtime config injected into the page
-const config = {
-  NODE_ENV: process.env.NODE_ENV ?? 'production',
-  API_URL: process.env.API_URL ?? '',           // '' = same origin
-  GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID ?? '',
-  UPLOAD_LIMIT: process.env.UPLOAD_LIMIT ?? 250000,
-  LOGIN_ENABLED: process.env.LOGIN_ENABLED ?? false,
-  UI_COLLECTIONS_ENABLED: process.env.UI_COLLECTIONS_ENABLED ?? false,
-  EXAMPLES_ENABLED: process.env.EXAMPLES_ENABLED ?? false,
-};
+// in generate-index.mjs — replaces the hardcoded config object
+const config = { ...process.env };  // whole env, passthrough
+delete config.NODE_ENV_IS_DEFAULT;   // nothing sensitive here if .env only holds public client config
 
 const indexHtml = `<!DOCTYPE html>
 <html lang="en">
