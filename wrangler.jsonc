@@ -2,7 +2,7 @@
   "name": "p5-editor-op",
   "compatibility_date": "2026-10-08",
   "assets": {
-    "directory": "./dist",
+    "directory": "./dist/static",
     "not_found_handling": "single-page-application"
   }
 }

@@ -53,7 +53,7 @@ const html = `<!DOCTYPE html>
 </html>
 `;
 
-writeFileSync('dist/index.html', html);
+writeFileSync('dist/static/index.html', html);
 console.log('✓ Generated dist/index.html');
 console.log('  JS:', appJs);
 console.log('  CSS:', appCss);
