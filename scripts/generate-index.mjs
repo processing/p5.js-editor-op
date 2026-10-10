@@ -5,16 +5,22 @@ import { readFileSync, writeFileSync } from 'fs';
 const manifest = JSON.parse(readFileSync('dist/static/manifest.json', 'utf8'));
 const appJs = manifest['/app.js'];
 const appCss = manifest['/app.css'];
+const previewAppJs = manifest['/previewApp.js'];
+const previewScriptsJs = manifest['/previewScripts.js'];
 
 if (!appJs || !appCss) {
   console.error('Missing /app.js or /app.css in manifest.json:', manifest);
   process.exit(1);
 }
+if (!previewAppJs || !previewScriptsJs) {
+  console.error('Missing preview bundles in manifest.json:', manifest);
+  process.exit(1);
+}
 
-// Mirrors server/views/index.ts renderIndex() — same keys, same types.
-// Booleans stay booleans; unset optionals become undefined, like the server did.
 const env = process.env;
-const configScript = `
+
+// ---- Main Editor Shell (mirrors server/views/index.ts renderIndex()) ----
+const editorConfigScript = `
         if (!window.process) { window.process = {}; }
         if (!window.process.env) { window.process.env = {}; }
         window.process.env.API_URL = '${env.API_URL ?? ''}';
@@ -31,7 +37,7 @@ const configScript = `
         window.process.env.GA_MEASUREMENT_ID = '${env.GA_MEASUREMENT_ID ?? ''}';
 `;
 
-const html = `<!DOCTYPE html>
+const editorHtml = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -43,7 +49,7 @@ const html = `<!DOCTYPE html>
     <link href='https://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <link rel='shortcut icon' href='/favicon.ico' type='image/x-icon' />
-    <script>${configScript}</script>
+    <script>${editorConfigScript}</script>
   </head>
   <body>
     <div id="root" class="root-app">
@@ -53,7 +59,35 @@ const html = `<!DOCTYPE html>
 </html>
 `;
 
-writeFileSync('dist/static/index.html', html);
-console.log('✓ Generated dist/index.html');
-console.log('  JS:', appJs);
-console.log('  CSS:', appCss);
+writeFileSync('dist/static/index.html', editorHtml);
+console.log('✓ Generated dist/static/index.html');
+console.log('  App JS:', appJs);
+console.log('  App CSS:', appCss);
+
+// ---- Preview Shell (mirrors server/views/previewIndex.ts renderPreviewIndex()) ----
+const previewConfigScript = `
+      if (!window.process) { window.process = {}; }
+      if (!window.process.env) { window.process.env = {}; }
+      window.process.env.PREVIEW_SCRIPTS_URL = '${previewScriptsJs}';
+      window.process.env.EDITOR_URL = '${env.EDITOR_URL ?? ''}';
+`;
+
+const previewHtml = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>${previewConfigScript}</script>
+  </head>
+  <body>
+    <div id="root" class="root-app">
+    </div>
+    <script src='${previewAppJs}'></script>
+  </body>
+</html>
+`;
+
+writeFileSync('dist/static/preview.html', previewHtml);
+console.log('✓ Generated dist/static/preview.html');
+console.log('  Preview JS:', previewAppJs);
+console.log('  Preview Scripts:', previewScriptsJs);
