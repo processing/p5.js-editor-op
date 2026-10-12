@@ -12,7 +12,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 module.exports = {
-  devtool: 'source-map',
+  // Source maps are disabled in production: generating them for the client
+  // bundle costs several GB of peak memory, which overruns the build container
+  // on smaller hosts. They also added ~27MB of publicly served .map files.
+  devtool: false,
   mode: 'production',
   entry: {
     app: [

@@ -1,0 +1,35 @@
+# Build context exclusions. The Dockerfile copies only what it needs, so this
+# exists to keep the uploaded context small — node_modules alone is ~1GB.
+
+node_modules
+dist
+.git
+.gitignore
+
+# Local environment and editor state
+.env
+.env.*
+.DS_Store
+.vscode
+.claude
+*.log
+npm-debug.log
+
+# Test, docs and tooling output — none of it is copied by the Dockerfile
+coverage
+storybook-static
+docs
+contributor_docs
+translations/contributor_docs
+.github
+infrastructure
+kubernetes_app.yml
+docker-compose.yml
+docker-compose-development.yml
+*.tsbuildinfo
+
+# Certificates and keys, in case any are ever present locally
+*.key
+*.crt
+*.pem
+*.ca-bundle
